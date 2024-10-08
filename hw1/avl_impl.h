@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <vector>
-
+#include <stack>
 #include "avl.h"
 
 // AVLNode
@@ -21,7 +21,7 @@ AVLTree<T>::AVLTree() : root(nullptr) {}
 template <typename T>
 int AVLTree<T>::height(AVLNode<T>* node) {
   if (node == nullptr){
-    return -1;
+    return 0;
   }
   else {
     return node -> height;
@@ -43,8 +43,8 @@ AVLNode<T>* AVLTree<T>::rightRotate(AVLNode<T>* y) {
   x->right = y;
   y->left =T2;
 
-  y->height=std:max(height(y-left), height(y->right))+1;
-  x->height=std:max(height(x-left), height(x->right))+1;
+  y->height=std::max(height(y->left), height(y->right))+1;
+  x->height=std::max(height(x->left), height(x->right))+1;
 
   return x;
 }
@@ -220,18 +220,84 @@ bool AVLTree<T>::search(T key) {
 
 template <typename T>
 std::vector<T> AVLTree<T>::preorderTraversal() {
+    std::vector<T> result; // Vector para almacenar los resultados
+    std::stack<AVLNode<T>*> nodeStack; // Usamos una pila para el recorrido
+    
+    // Comenzamos en la raíz del árbol
+    if (root != nullptr)
+        nodeStack.push(root);
+    
+    while (!nodeStack.empty()) {
+        AVLNode<T>* node = nodeStack.top();
+        nodeStack.pop();
+        
+        // Almacenar el valor del nodo actual
+        result.push_back(node->data);
+        
+        // Primero agregamos el hijo derecho, luego el izquierdo a la pila.
+        // Esto asegura que el hijo izquierdo se procese antes (recorrido preorden).
+        if (node->right != nullptr)
+            nodeStack.push(node->right);
+        if (node->left != nullptr)
+            nodeStack.push(node->left);
+    }
 
+    return result;
 }
+
 
 template <typename T>
 std::vector<T> AVLTree<T>::inorderTraversal() {
+    std::vector<T> result;
+    std::stack<AVLNode<T>*> nodeStack; 
+    AVLNode<T>* node = root;
 
+    while (node != nullptr || !nodeStack.empty()) {
+        while (node != nullptr) {
+            nodeStack.push(node);
+            node = node->left;
+        }
+        node = nodeStack.top();
+        nodeStack.pop();
+        result.push_back(node->data);
+        node = node->right;
+    }
+
+    return result;
 }
+
+
+
 
 template <typename T>
 std::vector<T> AVLTree<T>::postorderTraversal() {
+    std::vector<T> result;
+    AVLNode<T>* node = root;
+    if (node == nullptr)
+        return result;
+    
+    std::stack<AVLNode<T>*> stack1, stack2;
+    stack1.push(node);
+    
+    while (!stack1.empty()) {
+        node = stack1.top();
+        stack1.pop();
+        stack2.push(node);
+        
+        if (node->left != nullptr)
+            stack1.push(node->left);
+        if (node->right != nullptr)
+            stack1.push(node->right);
+    }
+    
+    while (!stack2.empty()) {
+        result.push_back(stack2.top()->data);
+        stack2.pop();
+    }
 
+    return result;
 }
+
 
 template <typename T>
 int AVLTree<T>::height() {
