@@ -201,8 +201,6 @@ void AVLTree<T>::postorder(AVLNode<T>* root, std::vector<T>& ret) {
     }
 }
 
-/// Public functions
-
 template <typename T>
 void AVLTree<T>::insert(T key) {
     root = insert(root,key);
