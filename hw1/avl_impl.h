@@ -220,10 +220,9 @@ bool AVLTree<T>::search(T key) {
 
 template <typename T>
 std::vector<T> AVLTree<T>::preorderTraversal() {
-    std::vector<T> result; // Vector para almacenar los resultados
-    std::stack<AVLNode<T>*> nodeStack; // Usamos una pila para el recorrido
+    std::vector<T> result;
+    std::stack<AVLNode<T>*> nodeStack;
     
-    // Comenzamos en la raíz del árbol
     if (root != nullptr)
         nodeStack.push(root);
     
@@ -231,11 +230,8 @@ std::vector<T> AVLTree<T>::preorderTraversal() {
         AVLNode<T>* node = nodeStack.top();
         nodeStack.pop();
         
-        // Almacenar el valor del nodo actual
         result.push_back(node->data);
         
-        // Primero agregamos el hijo derecho, luego el izquierdo a la pila.
-        // Esto asegura que el hijo izquierdo se procese antes (recorrido preorden).
         if (node->right != nullptr)
             nodeStack.push(node->right);
         if (node->left != nullptr)
